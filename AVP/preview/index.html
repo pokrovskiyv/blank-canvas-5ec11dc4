@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Адаптивный сценарный контроль в Moodle — интерактивные ветвящиеся сценарии для оценки компетенций студентов. Конкурс педагогических практик ТПУ 2026.">
+    <meta property="og:title" content="Адаптивный сценарный контроль в Moodle">
+    <meta property="og:description" content="Интерактивные ветвящиеся сценарии H5P для адаптивной оценки компетенций студентов в Moodle.">
+    <meta property="og:type" content="website">
+    <title>Адаптивный сценарный контроль в Moodle — ТПУ</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="styles/h5p.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green: #28BE46;
+            --green-dark: #1E9E38;
+            --green-light: #E8F8EB;
+            --green-link: #18803A;
+            --green-hero: #1B8A30;
+            --green-hero-dark: #166B25;
+            --accent: #1E9E38;
+            --yellow: #FFB600;
+            --coral: #FF4460;
+            --blue: #6573FF;
+            --text: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #767676;
+            --bg: #f7f8fa;
+            --white: #fff;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid #e4e8ee;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: none;
+        }
+        .topbar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), #34D058);
+        }
+        .topbar a {
+            color: var(--green-link);
+            text-decoration: none;
+            font-size: 0.88em;
+            font-weight: 500;
+        }
+        @media (hover: hover) {
+            .topbar a:hover { text-decoration: underline; }
+        }
+        .topbar-logo { margin-right: auto; display: flex; align-items: center; }
+        .topbar-nav { display: flex; gap: 16px; }
+
+        /* ── Hero ── */
+        .hero {
+            background: linear-gradient(135deg, var(--green-hero) 0%, var(--green-hero-dark) 100%);
+            color: white;
+            padding: 48px 40px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='30' viewBox='0 0 60 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 15L30 30L0 15Z' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E");
+            background-size: 60px 30px;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-toprow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .hero-toprow a {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        .hero h1 {
+            font-size: 2em;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .hero-subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            max-width: 640px;
+            margin-bottom: 20px;
+        }
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .hero-cta {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 28px;
+            background: white;
+            color: var(--green-hero);
+            font-weight: 700;
+            font-size: 0.95em;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        @media (hover: hover) {
+            .hero-cta:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+        }
+
+        /* ── Section ── */
+        .section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .section + .section { border-top: 1px solid #e4e8ee; padding-top: 48px; }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            font-size: 0.95em;
+        }
+
+        /* ── Scenario Cards ── */
+        .scenario-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 0;
+        }
+        .scenario-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px;
+            padding-right: 48px;
+            border: 2px solid #e4e8ee;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+        }
+        .scenario-card.active {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px var(--green-light);
+        }
+        .scenario-card:active { transform: scale(0.98); }
+        .scenario-card:focus-visible, .kit-card:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 2px;
+        }
+        .scenario-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            margin-bottom: 16px;
+        }
+        .scenario-card-icon.template {
+            background: linear-gradient(135deg, #E8F8EB, #B8E6C0);
+        }
+        .scenario-card-icon.original {
+            background: linear-gradient(135deg, #FFF4D6, #FFE4A0);
+        }
+        .scenario-card h3 {
+            font-size: 1.05em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .scenario-card p {
+            font-size: 0.88em;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .scenario-card-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+        .scenario-card-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .card-arrow {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            color: #aaa;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        /* ── H5P Player ── */
+        .player-section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+            position: relative;
+            z-index: 1;
+            isolation: isolate;
+        }
+        .player-wrapper {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: #fafbfc;
+            border-bottom: 1px solid #eee;
+        }
+        .player-label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .player-hint {
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+        #h5p-container {
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+            contain: paint;
+        }
+        #h5p-container iframe {
+            max-height: 80vh;
+        }
+        /* Prevent H5P z-index from escaping the player */
+        #h5p-container .h5p-iframe-wrapper { position: relative; z-index: 0; }
+        #h5p-container .h5p-iframe-wrapper iframe { z-index: 0 !important; }
+        #h5p-container .h5p-container { z-index: 0; }
+        .player-wrapper .h5p-popup-dialog,
+        .player-wrapper .h5p-confirmation-dialog-background { position: absolute; }
+        .player-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+        .player-loading .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e0e0e0;
+            border-top-color: var(--green-hero);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── Kit Section ── */
+        .kit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .kit-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 22px;
+            border: 1px solid #e8eaed;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+            position: relative;
+            z-index: 3;
+            pointer-events: auto;
+        }
+        .kit-card:active { transform: scale(0.98); }
+        .kit-card-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.82em;
+            font-weight: 600;
+            color: var(--green-link);
+        }
+        .kit-card:nth-child(2) .kit-card-link { color: var(--blue); }
+        .kit-card:nth-child(3) .kit-card-link { color: #C08A00; }
+        .kit-card:nth-child(4) .kit-card-link { color: var(--coral); }
+        .kit-card-icon {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--green-light);
+        }
+        .kit-card:nth-child(2) .kit-card-icon { background: #E8E0FF; }
+        .kit-card:nth-child(3) .kit-card-icon { background: #FFF4D6; }
+        .kit-card:nth-child(4) .kit-card-icon { background: #FFE4E8; }
+        .kit-card h4 {
+            font-size: 0.92em;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .kit-card p {
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ── How it works ── */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .step {
+            text-align: center;
+            padding: 24px 16px;
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--green);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 14px;
+        }
+        .step:nth-child(1) .step-number { background: var(--green); }
+        .step:nth-child(2) .step-number { background: var(--blue); }
+        .step:nth-child(3) .step-number { background: var(--yellow); }
+        .step h4 {
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .step p {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.7);
+            padding: 40px 20px 32px;
+            text-align: center;
+            font-size: 0.82em;
+            border-top: 3px solid var(--green);
+            max-width: none;
+        }
+        .footer a { color: var(--green); text-decoration: none; }
+        @media (hover: hover) {
+            .footer a:hover { text-decoration: underline; }
+        }
+        .footer-logo { margin-bottom: 16px; }
+        .footer-links { margin-bottom: 16px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        /* ── Hover / Touch ── */
+        @media (hover: hover) {
+            .scenario-card:hover {
+                border-color: var(--accent);
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-2px);
+            }
+            .scenario-card:hover .card-arrow {
+                color: var(--accent);
+                transform: translateY(-50%) translateX(3px);
+            }
+            .kit-card:hover {
+                box-shadow: var(--shadow-lg);
+                border-color: var(--accent);
+                transform: translateY(-2px);
+            }
+            .kit-card:hover .kit-card-link { text-decoration: underline; }
+            .kit-card:nth-child(2):hover { border-color: var(--blue); }
+            .kit-card:nth-child(3):hover { border-color: var(--yellow); }
+            .kit-card:nth-child(4):hover { border-color: var(--coral); }
+        }
+
+        /* ── Scroll reveal ── */
+        .section, .player-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .section.visible, .player-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .steps { grid-template-columns: 1fr; }
+            .kit-grid { grid-template-columns: 1fr 1fr; }
+            .hero { padding: 40px 24px 36px; }
+            .hero h1 { font-size: 1.7em; }
+            .scenario-cards { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .scenario-cards { grid-template-columns: 1fr; }
+            .kit-grid { grid-template-columns: 1fr; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 1.5em; }
+            .hero-meta { flex-direction: column; gap: 8px; }
+            .section { padding: 28px 16px; }
+            .hero-subtitle { font-size: 0.95em; }
+            .section-title { font-size: 1.2em; }
+            .player-section { padding: 0 16px 28px; }
+            .player-header { padding: 12px 16px; flex-direction: column; gap: 4px; align-items: flex-start; }
+            .scenario-card { padding: 20px; }
+            .hero-toprow { flex-direction: column; align-items: flex-start; }
+            .hero-badge { font-size: 0.72em; }
+            .topbar-nav { gap: 10px; font-size: 0.82em; }
+        }
+    </style>
+    <script src="main.bundle.js"></script>
+</head>
+<body>
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <a href="https://tpu.ru/" target="_blank" rel="noopener" class="topbar-logo">
+            <img src="assets/tpu-logo-color.svg" alt="ТПУ" style="height:28px;">
+        </a>
+        <nav class="topbar-nav">
+            <a href="instruction.html">Инструкция</a>
+            <a href="prompts.html">Промпты</a>
+            <a href="checklist.html">Чеклист</a>
+        </nav>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-inner">
+            <div class="hero-toprow">
+                <a href="https://tpu.ru/" target="_blank" rel="noopener">
+                    <img src="assets/tpu-logo-white.svg" alt="Томский политехнический университет" style="height:52px;">
+                </a>
+                <div class="hero-badge">Конкурс «Лучшая педагогическая практика» ТПУ 2026 &middot; ПРО-технологии</div>
+            </div>
+            <a href="https://tpu.ru" target="_blank" rel="noopener" class="hero-logo">
+                <img src="assets/tpu-logo-white.svg" alt="Томский политехнический университет" style="height: 48px; margin-bottom: 16px; opacity: 0.95;">
+            </a>
+            <h1>Адаптивный сценарный контроль в&nbsp;Moodle</h1>
+            <p class="hero-subtitle">
+                Методический комплект для создания интерактивных оценочных сценариев
+                на основе H5P Branching Scenario. Студент принимает решения в профессиональном кейсе,
+                получает обратную связь на каждом шаге, а баллы автоматически попадают в журнал оценок.
+            </p>
+            <div class="hero-meta">
+                <span>Покровская А.В. &middot; Бизнес-школа ТПУ</span>
+                <span>Апробация: 22 студента, менеджмент</span>
+            </div>
+            <a href="instruction.html" class="hero-cta">Начать создание сценария →</a>
+        </div>
+    </div>
+
+    <!-- Scenario Cards -->
+    <div class="section">
+        <h2 class="section-title">Попробуйте сценарий</h2>
+        <p class="section-desc">Выберите один из вариантов, чтобы пройти интерактивный сценарий прямо в браузере.</p>
+        <div class="scenario-cards">
+            <a class="scenario-card" id="card-original" href="?scenario=original">
+                <div class="scenario-card-icon original">&#9734;</div>
+                <h3>Апробированный сценарий</h3>
+                <p>Профессиональный кейс «Coffee Shop Rush Week» по дисциплине «Английский язык в профессиональной деятельности». Пройден 22 студентами.</p>
+                <div class="scenario-card-stats">
+                    <span>29 экранов</span>
+                    <span>3 ветвления</span>
+                    <span>~40 мин</span>
+                </div>
+                <span class="card-arrow">&rarr;</span>
+            </a>
+            <a class="scenario-card" id="card-template" href="?scenario=template">
+                <div class="scenario-card-icon template">&#9998;</div>
+                <h3>Универсальный шаблон</h3>
+                <p>Готовая структура с текстами-заполнителями. Замените содержание под свою дисциплину по инструкции из комплекта.</p>
+                <div class="scenario-card-stats">
+                    <span>13 экранов</span>
+                    <span>3 ветвления</span>
+                    <span>Русская локализация</span>
+                </div>
+                <span class="card-arrow">&rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- H5P Player -->
+    <div class="player-section" id="player-section" style="display: none;">
+        <div class="player-wrapper">
+            <div class="player-header">
+                <span class="player-label" id="player-label">Загрузка сценария...</span>
+                <span class="player-hint">Нажимайте кнопки внутри сценария для навигации</span>
+            </div>
+            <div id="h5p-container">
+                <div class="player-loading" id="player-loading">
+                    <div class="spinner"></div>
+                    Загрузка сценария...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kit -->
+    <div class="section">
+        <h2 class="section-title">Методический комплект</h2>
+        <p class="section-desc">Всё необходимое, чтобы создать собственный сценарный контроль за 1-2 часа.</p>
+        <div class="kit-grid">
+            <a class="kit-card" href="?scenario=template">
+                <div class="kit-card-icon">&#128221;</div>
+                <h4>H5P-шаблон</h4>
+                <p>Готовый файл с&nbsp;ветвлением и&nbsp;заполнителями. Импортируйте в&nbsp;Moodle и&nbsp;замените тексты.</p>
+                <span class="kit-card-link">Попробовать &rarr;</span>
+            </a>
+            <a class="kit-card" href="instruction.html">
+                <div class="kit-card-icon">&#128214;</div>
+                <h4>Пошаговая инструкция</h4>
+                <p>5 шагов от импорта до публикации. Скриншоты не нужны &mdash; описан каждый клик.</p>
+                <span class="kit-card-link">Читать &rarr;</span>
+            </a>
+            <a class="kit-card" href="prompts.html">
+                <div class="kit-card-icon">&#129302;</div>
+                <h4>Промпты для AI</h4>
+                <p>4 промпта для генерации кейса, вопросов, обратной связи и&nbsp;информационных экранов.</p>
+                <span class="kit-card-link">Открыть &rarr;</span>
+            </a>
+            <a class="kit-card" href="checklist.html">
+                <div class="kit-card-icon">&#9745;</div>
+                <h4>Чеклист</h4>
+                <p>Контрольный список для проверки готовности сценария перед публикацией.</p>
+                <span class="kit-card-link">Открыть &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="section">
+        <h2 class="section-title">Как создать свой сценарий</h2>
+        <p class="section-desc">Три шага &mdash; от идеи до готового элемента курса в Moodle.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Сгенерируйте содержание</h4>
+                <p>Используйте промпты из комплекта, чтобы AI создал кейс, вопросы и обратную связь для вашей дисциплины.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Заполните шаблон</h4>
+                <p>Импортируйте H5P-шаблон в Moodle и замените тексты-заполнители на сгенерированный контент.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Опубликуйте</h4>
+                <p>Настройте сроки и параметры оценивания. Баллы автоматически попадут в журнал оценок курса.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-logo">
+            <img src="assets/tpu-logo-white.svg" alt="ТПУ" style="height:36px; opacity: 0.8;">
+        </div>
+        <div class="footer-links">
+            <a href="instruction.html">Инструкция</a>
+            <a href="prompts.html">Промпты</a>
+            <a href="checklist.html">Чеклист</a>
+        </div>
+        <p>Покровская Анастасия Витальевна · Ассистент Отделения управления бизнесом и инновациями · Бизнес-школа ТПУ</p>
+        <p style="margin-top: 4px;">Дисциплина: «Английский язык в профессиональной деятельности» · Направление: 38.03.02 Менеджмент</p>
+        <p style="margin-top: 12px; opacity: 0.5;">© 2026 Томский политехнический университет</p>
+    </div>
+
+    <script>
+        (function() {
+            var labels = {
+                template: 'Универсальный шаблон',
+                original: 'Апробированный сценарий — Coffee Shop Rush Week'
+            };
+
+            var params = new URLSearchParams(window.location.search);
+            var scenario = params.get('scenario');
+
+            if (scenario && (scenario === 'template' || scenario === 'original')) {
+                var card = document.getElementById('card-' + scenario);
+                if (card) card.classList.add('active');
+
+                document.getElementById('player-section').style.display = 'block';
+                document.getElementById('player-label').textContent = labels[scenario];
+
+                window.addEventListener('load', function() {
+                    var container = document.getElementById('h5p-container');
+                    var loading = document.getElementById('player-loading');
+
+                    if (window.location.protocol === 'file:') {
+                        if (loading) {
+                            loading.innerHTML = '<div style="text-align:center;padding:32px 16px;">'
+                                + '<p style="color:#c00;font-weight:600;margin-bottom:12px;">Сценарий нельзя загрузить напрямую из файла</p>'
+                                + '<p style="color:#555;line-height:1.6;max-width:480px;margin:0 auto;">Браузер блокирует загрузку данных при открытии через <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;">file://</code>.<br>'
+                                + 'Откройте страницу через локальный сервер:</p>'
+                                + '<pre style="background:#1a1a2e;color:#e0e0e0;padding:12px 16px;border-radius:8px;margin:12px auto;max-width:420px;text-align:left;font-size:0.9em;">'
+                                + 'cd preview\npython3 -m http.server 8000</pre>'
+                                + '<p style="color:#555;">Затем откройте <a href="http://localhost:8000/?scenario=' + scenario + '" style="color:var(--green-link);">http://localhost:8000</a></p>'
+                                + '</div>';
+                        }
+                        return;
+                    }
+
+                    new H5PStandalone.H5P(container, {
+                        h5pJsonPath: './' + scenario,
+                        frameJs: 'frame.bundle.js',
+                        frameCss: 'styles/h5p.css',
+                    }).then(function() {
+                        if (loading) loading.style.display = 'none';
+                    }).catch(function(err) {
+                        if (loading) {
+                            loading.innerHTML = '<span style="color:#c00;">Не удалось загрузить сценарий: ' + err.message + '</span>';
+                        }
+                    });
+                });
+            }
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.section, .player-section').forEach(function(el) {
+                observer.observe(el);
+            });
+        })();
+    </script>
+</body>
+</html>

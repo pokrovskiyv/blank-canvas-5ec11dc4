@@ -1,0 +1,22 @@
+{
+  "name": "avp",
+  "version": "1.0.0",
+  "description": "Готовый набор материалов для создания адаптивных оценочных сценариев на основе H5P Branching Scenario в LMS Moodle — с шаблонами, инструкциями и промптами для генерации контента.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "h5p-standalone": "^3.8.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
