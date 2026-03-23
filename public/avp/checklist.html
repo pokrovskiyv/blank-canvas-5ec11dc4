@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Чек-лист проверки качества ветвящегося сценария H5P. Структура, контент, оценивание, доступность, техническая проверка.">
+    <meta property="og:title" content="Чек-лист — Адаптивный сценарный контроль">
+    <meta property="og:description" content="Чек-лист качества ветвящегося сценария для Moodle.">
+    <meta property="og:type" content="article">
+    <title>Чеклист — Адаптивный сценарный контроль</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --accent: #28BE46;
+            --accent-dark: #1E9E38;
+            --accent-light: #E8F8EB;
+            --accent-glow: rgba(40, 190, 70, 0.15);
+            --text: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #767676;
+            --bg: #f7f8fa;
+            --white: #fff;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --coral: #FF4460;
+        }
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid #e4e8ee;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #34D058);
+        }
+        .topbar a {
+            color: var(--accent-dark);
+            text-decoration: none;
+            font-size: 0.88em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        @media (hover: hover) {
+            .topbar a:hover { text-decoration: underline; }
+        }
+        .topbar a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .topbar-logo { margin-right: auto; display: flex; align-items: center; }
+        .topbar-nav { display: flex; gap: 4px; }
+        .topbar-nav a.active { color: var(--text); font-weight: 600; background: var(--bg); }
+        .article {
+            max-width: 640px;
+            margin: 40px auto;
+            padding: 0 24px 80px;
+        }
+        .article-header {
+            margin-bottom: 36px;
+        }
+        .article-header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 12px;
+        }
+        .article-header .subtitle {
+            font-size: 1em;
+            color: var(--text-secondary);
+        }
+        .progress-bar {
+            background: #e4e8ee;
+            border-radius: 8px;
+            height: 8px;
+            margin: 20px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: var(--accent);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 0.82em;
+            color: var(--text-muted);
+        }
+
+        .reset-btn {
+            background: none;
+            border: 1px solid #e4e8ee;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            cursor: pointer;
+            font-family: inherit;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+        @media (hover: hover) {
+            .reset-btn:hover { border-color: var(--coral); color: var(--coral); }
+        }
+
+        .checklist-group {
+            background: var(--white);
+            border: 1px solid #e4e8ee;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .checklist-group-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .checklist-group-header h2 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #177A2E;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+        .checklist-group-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+        }
+        .group-prep .checklist-group-icon { background: #FFF4D6; }
+        .group-content .checklist-group-icon { background: #E8E0FF; }
+        .group-build .checklist-group-icon { background: #FFE4E8; }
+        .group-check .checklist-group-icon { background: var(--accent-light); }
+
+        .checklist-subheader {
+            font-size: 0.88em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 16px 0 8px;
+            padding-left: 4px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+        @media (hover: hover) {
+            .check-item:hover { background: #f0f2f5; }
+        }
+        .check-item:active { background: #e8eaed; }
+        .check-item.checked {
+            opacity: 0.6;
+        }
+        .check-item.checked .check-label {
+            text-decoration: line-through;
+        }
+        .check-item input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            margin-top: 2px;
+            transition: all 0.15s;
+        }
+        .check-item input[type="checkbox"]:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+            animation: checkPop 0.2s ease;
+        }
+        @keyframes checkPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .check-item input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .check-label {
+            font-size: 0.92em;
+            line-height: 1.5;
+        }
+        .check-sublabel {
+            font-size: 0.82em;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .footer {
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.7);
+            padding: 40px 20px 32px;
+            text-align: center;
+            font-size: 0.82em;
+            border-top: 3px solid var(--accent);
+        }
+        .footer a { color: var(--accent); text-decoration: none; }
+        @media (hover: hover) { .footer a:hover { text-decoration: underline; } }
+        .footer-logo { margin-bottom: 16px; }
+        .footer-links { margin-bottom: 16px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        @media (max-width: 640px) {
+            .topbar { padding: 10px 16px; gap: 10px; }
+            .topbar-nav { gap: 2px; }
+            .topbar-nav a { font-size: 0.82em; padding: 4px 6px; }
+            .article { padding: 0 16px 40px; margin-top: 24px; }
+            .article-header h1 { font-size: 1.4em; }
+            .article-header .subtitle { font-size: 0.9em; }
+            .checklist-group { padding: 16px; }
+            .check-item { padding: 10px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="https://tpu.ru/" target="_blank" rel="noopener" class="topbar-logo">
+            <img src="assets/tpu-logo-color.svg" alt="ТПУ" style="height:28px;">
+        </a>
+        <a href="index.html">&larr; На главную</a>
+        <nav class="topbar-nav">
+            <a href="instruction.html">Инструкция</a>
+            <a href="prompts.html">Промпты</a>
+            <a href="checklist.html" class="active">Чеклист</a>
+        </nav>
+    </div>
+
+    <div class="article">
+        <div class="article-header">
+            <h1>Чеклист подготовки</h1>
+            <p class="subtitle">Контрольный список для создания сценарного контроля. Отмечайте выполненные пункты &mdash; прогресс сохраняется в браузере.</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+            <div class="progress-text" id="progress-text">0 из 0 выполнено</div>
+            <button class="reset-btn" id="reset-btn">Сбросить</button>
+        </div>
+
+        <!-- Group 1: Before start -->
+        <div class="checklist-group group-prep">
+            <div class="checklist-group-header">
+                <div class="checklist-group-icon">&#128203;</div>
+                <h2>До начала работы</h2>
+            </div>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c1">
+                <div>
+                    <div class="check-label">Определена дисциплина и тема контроля</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c2">
+                <div>
+                    <div class="check-label">Сформулированы проверяемые результаты обучения</div>
+                    <div class="check-sublabel">2-4 результата</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c3">
+                <div>
+                    <div class="check-label">Выбрана профессиональная роль студента в сценарии</div>
+                    <div class="check-sublabel">Например: менеджер проекта, инженер, аналитик, консультант</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c4">
+                <div>
+                    <div class="check-label">Есть доступ к курсу Moodle с правами редактирования</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c5">
+                <div>
+                    <div class="check-label">Модуль H5P активирован в Moodle</div>
+                    <div class="check-sublabel">Если &laquo;Интерактивный контент&raquo; не отображается &mdash; обратитесь к администратору</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c6">
+                <div>
+                    <div class="check-label">Скачан файл шаблона (шаблон-сценарий.h5p)</div>
+                </div>
+            </label>
+        </div>
+
+        <!-- Group 2: Content -->
+        <div class="checklist-group group-content">
+            <div class="checklist-group-header">
+                <div class="checklist-group-icon">&#9997;</div>
+                <h2>Подготовка контента</h2>
+            </div>
+
+            <div class="checklist-subheader">С помощью AI (рекомендуется)</div>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c7">
+                <div>
+                    <div class="check-label">Сгенерирован кейс с помощью Промпта 1</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c8">
+                <div>
+                    <div class="check-label">Сгенерированы точки принятия решений (Промпт 2)</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c9">
+                <div>
+                    <div class="check-label">Сгенерирована обратная связь (Промпт 3)</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c10">
+                <div>
+                    <div class="check-label">Сгенерированы информационные экраны (Промпт 4)</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c11">
+                <div>
+                    <div class="check-label">Все тексты проверены на предметную корректность</div>
+                </div>
+            </label>
+
+            <div class="checklist-subheader">Или вручную</div>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c12">
+                <div>
+                    <div class="check-label">Написан текст кейса (3-5 предложений)</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c13">
+                <div>
+                    <div class="check-label">Подготовлены 3 точки принятия решений с вариантами</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c14">
+                <div>
+                    <div class="check-label">Написана обратная связь для каждого варианта ответа</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c15">
+                <div>
+                    <div class="check-label">Подготовлены переходные тексты и приветственный/итоговый экраны</div>
+                </div>
+            </label>
+        </div>
+
+        <!-- Group 3: Build -->
+        <div class="checklist-group group-build">
+            <div class="checklist-group-header">
+                <div class="checklist-group-icon">&#128736;</div>
+                <h2>Сборка в Moodle</h2>
+            </div>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c16">
+                <div>
+                    <div class="check-label">Шаблон H5P импортирован в курс</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c17">
+                <div>
+                    <div class="check-label">Все тексты-заполнители заменены на подготовленный контент</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c18">
+                <div>
+                    <div class="check-label">Ветвления настроены корректно</div>
+                    <div class="check-sublabel">Каждый вариант ведёт к нужному экрану</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c19">
+                <div>
+                    <div class="check-label">Настроены сроки, попытки и оценивание</div>
+                </div>
+            </label>
+        </div>
+
+        <!-- Group 4: Check -->
+        <div class="checklist-group group-check">
+            <div class="checklist-group-header">
+                <div class="checklist-group-icon">&#9989;</div>
+                <h2>Проверка перед публикацией</h2>
+            </div>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c20">
+                <div>
+                    <div class="check-label">Сценарий пройден по &laquo;правильному&raquo; пути</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c21">
+                <div>
+                    <div class="check-label">Проверен хотя бы один &laquo;неправильный&raquo; путь</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c22">
+                <div>
+                    <div class="check-label">Обратная связь отображается корректно</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c23">
+                <div>
+                    <div class="check-label">Результат фиксируется в журнале оценок Moodle</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c24">
+                <div>
+                    <div class="check-label">Время прохождения адекватное (20-40 минут)</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c25">
+                <div>
+                    <div class="check-label">Студенты предупреждены: сценарий нужно проходить за один раз</div>
+                    <div class="check-sublabel">Прогресс внутри H5P не сохраняется при закрытии браузера</div>
+                </div>
+            </label>
+
+            <label class="check-item">
+                <input type="checkbox" data-key="c26">
+                <div>
+                    <div class="check-label">Коллега прошёл сценарий как тестовый студент</div>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">
+            <img src="assets/tpu-logo-white.svg" alt="ТПУ" style="height:36px; opacity:0.8;">
+        </div>
+        <div class="footer-links">
+            <a href="index.html">Главная</a>
+            <a href="instruction.html">Инструкция</a>
+            <a href="prompts.html">Промпты</a>
+        </div>
+        <p>&copy; 2026 Томский политехнический университет</p>
+    </div>
+
+    <script>
+        (function() {
+            var items = document.querySelectorAll('input[type="checkbox"]');
+            var total = items.length;
+
+            function updateProgress() {
+                var checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                var pct = Math.round((checked / total) * 100);
+                document.getElementById('progress-fill').style.width = pct + '%';
+                document.getElementById('progress-text').textContent = checked + ' из ' + total + ' выполнено';
+            }
+
+            items.forEach(function(item) {
+                var key = item.getAttribute('data-key');
+                if (localStorage.getItem('checklist_' + key) === 'true') {
+                    item.checked = true;
+                    item.closest('.check-item').classList.add('checked');
+                }
+
+                item.addEventListener('change', function() {
+                    localStorage.setItem('checklist_' + key, item.checked);
+                    item.closest('.check-item').classList.toggle('checked', item.checked);
+                    updateProgress();
+                });
+            });
+
+            updateProgress();
+
+            document.getElementById('reset-btn').addEventListener('click', function() {
+                items.forEach(function(item) {
+                    var key = item.getAttribute('data-key');
+                    localStorage.removeItem('checklist_' + key);
+                    item.checked = false;
+                    item.closest('.check-item').classList.remove('checked');
+                });
+                updateProgress();
+            });
+        })();
+    </script>
+</body>
+</html>

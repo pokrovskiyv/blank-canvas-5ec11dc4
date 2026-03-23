@@ -1,8 +1,10 @@
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <h1 className="text-4xl font-bold text-foreground">Welcome</h1>
-    </div>
+    <iframe
+      src="/avp/index.html"
+      className="w-full h-screen border-0"
+      title="Адаптивный сценарный контроль в Moodle"
+    />
   );
 };
 
