@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Пошаговая инструкция по созданию ветвящихся сценариев H5P в Moodle для адаптивного контроля знаний.">
+    <meta property="og:title" content="Инструкция — Адаптивный сценарный контроль">
+    <meta property="og:description" content="Пошаговое руководство по созданию ветвящихся сценариев в Moodle.">
+    <meta property="og:type" content="article">
+    <title>Пошаговая инструкция — Адаптивный сценарный контроль</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --accent: #28BE46;
+            --accent-dark: #1E9E38;
+            --accent-light: #E8F8EB;
+            --accent-glow: rgba(40, 190, 70, 0.15);
+            --text: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #767676;
+            --bg: #f7f8fa;
+            --white: #fff;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --coral: #FF4460;
+        }
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid #e4e8ee;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #34D058);
+        }
+        .topbar a {
+            color: var(--accent-dark);
+            text-decoration: none;
+            font-size: 0.88em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        @media (hover: hover) {
+            .topbar a:hover { text-decoration: underline; }
+        }
+        .topbar a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .topbar-logo { margin-right: auto; display: flex; align-items: center; }
+        .topbar-nav { display: flex; gap: 4px; }
+        .topbar-nav a.active { color: var(--text); font-weight: 600; background: var(--bg); }
+        .article {
+            max-width: 740px;
+            margin: 40px auto;
+            padding: 0 24px 80px;
+        }
+        .article-header {
+            margin-bottom: 36px;
+        }
+        .article-header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 12px;
+        }
+        .article-header .subtitle {
+            font-size: 1em;
+            color: var(--text-secondary);
+        }
+        h2 {
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            color: #177A2E;
+        }
+        h3 {
+            font-size: 1.05em;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 14px;
+        }
+        ol, ul {
+            margin-bottom: 14px;
+            padding-left: 1.5em;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        strong {
+            font-weight: 600;
+        }
+        .callout {
+            background: #FFF0F2;
+            border-left: 4px solid var(--coral);
+            padding: 16px 20px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 20px 0;
+            font-size: 0.92em;
+        }
+        .callout strong {
+            color: #C8354D;
+        }
+        .faq-item {
+            background: var(--white);
+            border: 1px solid #e4e8ee;
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        @media (hover: hover) {
+            .faq-item:hover { border-color: var(--accent); }
+        }
+        .faq-item h3 {
+            margin-top: 0;
+            font-size: 0.95em;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-item h3::after {
+            content: '+';
+            font-size: 1.2em;
+            color: var(--text-muted);
+            font-weight: 400;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+        .faq-item.open h3::after {
+            content: '−';
+        }
+        .faq-item p {
+            display: none;
+            margin-top: 12px;
+            margin-bottom: 0;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        .faq-item.open p { display: block; }
+        code {
+            background: #f0f2f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+        .footer {
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.7);
+            padding: 40px 20px 32px;
+            text-align: center;
+            font-size: 0.82em;
+            border-top: 3px solid var(--accent);
+        }
+        .footer a { color: var(--accent); text-decoration: none; }
+        @media (hover: hover) { .footer a:hover { text-decoration: underline; } }
+        .footer-logo { margin-bottom: 16px; }
+        .footer-links { margin-bottom: 16px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        @media (max-width: 640px) {
+            .topbar { padding: 10px 16px; gap: 10px; }
+            .topbar-nav { gap: 2px; }
+            .topbar-nav a { font-size: 0.82em; padding: 4px 6px; }
+            .article { padding: 0 16px 40px; margin-top: 24px; }
+            .article-header h1 { font-size: 1.4em; }
+            .article-header .subtitle { font-size: 0.9em; }
+            h2 { font-size: 1.1em; margin-top: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="https://tpu.ru/" target="_blank" rel="noopener" class="topbar-logo">
+            <img src="assets/tpu-logo-color.svg" alt="ТПУ" style="height:28px;">
+        </a>
+        <a href="index.html">← На главную</a>
+        <nav class="topbar-nav">
+            <a href="instruction.html" class="active">Инструкция</a>
+            <a href="prompts.html">Промпты</a>
+            <a href="checklist.html">Чеклист</a>
+        </nav>
+    </div>
+
+    <div class="article">
+        <div class="article-header">
+            <h1>Как создать интерактивный сценарий в&nbsp;Moodle</h1>
+            <p class="subtitle">Пошаговая инструкция по работе с H5P Branching Scenario. От подготовки контента до публикации &mdash; 5 шагов.</p>
+        </div>
+
+        <h2>1. Что такое H5P Branching Scenario</h2>
+        <p>H5P Branching Scenario &mdash; это интерактивное задание, в котором студент проходит профессиональный сценарий и принимает решения в ключевых точках. В зависимости от выбора студента меняется дальнейшая траектория прохождения: правильные решения ведут к успешному завершению кейса, а ошибочные &mdash; к дополнительным объяснениям и возможности попробовать снова.</p>
+        <p>Результат автоматически фиксируется в журнале оценок Moodle, так что вам не нужно проверять работу вручную. По сути, это цифровой аналог ситуационного задания, только студент проходит его самостоятельно, а система сама выставляет оценку.</p>
+
+        <h2>2. Что вам понадобится</h2>
+        <ul>
+            <li><strong>Курс в Moodle с правами редактирования.</strong> Если вы можете добавлять задания и ресурсы в свой курс &mdash; значит, права у вас уже есть.</li>
+            <li><strong>Файл шаблона.</strong> В комплекте материалов это файл <code>шаблон-сценарий.h5p</code>. Скачайте его на свой компьютер.</li>
+            <li><strong>Подготовленный контент.</strong> Текст кейса, вопросы и варианты ответов. Для подготовки используйте <a href="prompts.html">промпты для AI</a> и <a href="checklist.html">чеклист</a>.</li>
+            <li><strong>Примерно 1 час свободного времени.</strong> В первый раз процесс займёт чуть больше, но со второго-третьего сценария вы будете справляться за 20-30 минут.</li>
+        </ul>
+
+        <div class="callout">
+            <strong>Важно:</strong> Модуль H5P должен быть активирован администратором Moodle. Если при добавлении элемента курса вы не видите пункт &laquo;Интерактивный контент (H5P)&raquo;, обратитесь в службу поддержки электронного обучения. В Moodle ТПУ модуль уже активирован.
+        </div>
+
+        <h2>Шаг 1. Подготовьте контент</h2>
+        <p>Перед тем как открывать Moodle, подготовьте все тексты заранее. Работать в редакторе сценария проще, когда контент уже написан.</p>
+        <p>Вам нужно подготовить:</p>
+        <ol>
+            <li><strong>Текст профессионального кейса</strong> &mdash; описание ситуации, в которую попадает студент. 5-8 предложений.</li>
+            <li><strong>3 точки принятия решений</strong> &mdash; вопрос + 3-4 варианта ответа для каждой точки. Один-два варианта ведут к правильному продолжению, остальные &mdash; к ошибочным веткам.</li>
+            <li><strong>Обратная связь для каждого варианта</strong> &mdash; почему выбор правильный или к чему он ведёт. Это самая ценная часть сценария с точки зрения обучения.</li>
+            <li><strong>Информационные тексты</strong> между точками ветвления &mdash; что произошло после выбора студента.</li>
+        </ol>
+        <p>Для генерации контента используйте <a href="prompts.html">промпты для AI</a> &mdash; скопируйте промпт, укажите свою тему, получите черновик и адаптируйте.</p>
+
+        <h2>Шаг 2. Импортируйте шаблон в Moodle</h2>
+        <ol>
+            <li>Откройте ваш курс в Moodle.</li>
+            <li>Включите <strong>режим редактирования</strong> (переключатель в правом верхнем углу).</li>
+            <li>Перейдите к нужному разделу курса.</li>
+            <li>Нажмите <strong>&laquo;Добавить элемент или ресурс&raquo;</strong>.</li>
+            <li>Выберите <strong>&laquo;Интерактивный контент (H5P)&raquo;</strong>.</li>
+            <li>В поле <strong>&laquo;Файл пакета&raquo;</strong> загрузите файл <code>шаблон-сценарий.h5p</code>.</li>
+            <li>Укажите понятное название, например: &laquo;Сценарный контроль: Принятие управленческих решений&raquo;.</li>
+            <li>Нажмите <strong>&laquo;Сохранить и показать&raquo;</strong>.</li>
+        </ol>
+
+        <h2>Шаг 3. Замените тексты-заполнители</h2>
+        <p>Самый важный этап &mdash; наполнение сценария вашим содержанием.</p>
+        <ol>
+            <li>На странице активности нажмите <strong>&laquo;Настройки&raquo;</strong> &rarr; <strong>&laquo;Редактировать содержимое H5P&raquo;</strong>. Откроется визуальный редактор.</li>
+            <li>Вы увидите схему сценария &mdash; набор экранов, соединённых линиями. Нажмите на любой прямоугольник, чтобы открыть его.</li>
+            <li><strong>Замените вводный текст</strong> &mdash; первый экран (Advanced Text) с описанием ситуации.</li>
+            <li><strong>Замените вопросы</strong> &mdash; элементы &laquo;Branching Question&raquo; (иконка со знаком вопроса). Для каждого варианта ответа проверьте поле &laquo;Перейти к&raquo; &mdash; оно определяет, куда попадёт студент.</li>
+            <li><strong>Замените экраны обратной связи</strong> &mdash; тексты после неправильных ответов.</li>
+            <li><strong>Замените промежуточные экраны</strong> &mdash; информация между точками ветвления.</li>
+            <li>Нажмите <strong>&laquo;Сохранить&raquo;</strong>.</li>
+        </ol>
+
+        <div class="callout">
+            <strong>Обратите внимание:</strong> Интерфейс редактора H5P отображается на английском языке. Это нормально &mdash; это особенность редактора. Студенты будут видеть сценарий с русскоязычными кнопками и текстом.
+        </div>
+
+        <h2>Шаг 4. Настройте параметры задания</h2>
+        <ol>
+            <li><strong>Сроки выполнения</strong> &mdash; в разделе &laquo;Доступность&raquo; укажите дату открытия и закрытия.</li>
+            <li><strong>Количество попыток</strong> &mdash; рекомендуется 2-3 попытки.</li>
+            <li><strong>Метод оценивания</strong> &mdash; при нескольких попытках обычно выбирают &laquo;Максимальная оценка&raquo;.</li>
+            <li><strong>Журнал оценок</strong> &mdash; укажите категорию и максимальный балл.</li>
+        </ol>
+
+        <h2>Шаг 5. Проверьте и опубликуйте</h2>
+        <ol>
+            <li>Пройдите сценарий, выбирая <strong>правильные</strong> ответы. Проверьте тексты и логику.</li>
+            <li>Пройдите ещё раз, выбирая <strong>неправильные</strong> ответы. Убедитесь, что обратная связь отображается корректно.</li>
+            <li>Проверьте <strong>журнал оценок</strong> &mdash; результат должен зафиксироваться.</li>
+            <li>Попросите <strong>коллегу</strong> пройти сценарий как тестовый студент.</li>
+            <li>Убедитесь, что задание видимо для студентов и сроки настроены.</li>
+        </ol>
+
+        <h2>Частые вопросы</h2>
+
+        <div class="faq-item">
+            <h3>Можно ли добавить больше точек ветвления?</h3>
+            <p>Да. В редакторе нажмите &laquo;Add Content&raquo; и выберите тип экрана. Новый элемент появится на схеме.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Как изменить количество вариантов ответа?</h3>
+            <p>Откройте Branching Question. Под списком вариантов есть кнопка &laquo;Add Alternative&raquo;. Для удаления &mdash; иконка крестика рядом с вариантом.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Что если студент закроет браузер посередине?</h3>
+            <p>Прогресс может не сохраниться. Предупредите студентов: сценарий нужно проходить целиком за один раз.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Можно ли разрешить навигацию назад?</h3>
+            <p>Да. В Behavioural Settings включите &laquo;Allow backward navigation&raquo;.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Как посмотреть результаты студентов?</h3>
+            <p>В стандартном журнале оценок Moodle: курс &rarr; &laquo;Оценки&raquo;. Для подробностей &mdash; отчёт по активности.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Подходит ли шаблон для другой дисциплины?</h3>
+            <p>Да. Структура универсальна: вводный текст, ветвления, обратная связь, завершение. Просто замените тексты.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Как вернуться к редактированию после сохранения?</h3>
+            <p>Откройте активность &rarr; шестерёнка &laquo;Настройки&raquo; &rarr; &laquo;Редактировать содержимое H5P&raquo;. Убедитесь, что режим редактирования включён.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Где получить помощь?</h3>
+            <p>Служба поддержки электронного обучения ТПУ. Также можно обратиться к коллегам, которые уже используют H5P.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">
+            <img src="assets/tpu-logo-white.svg" alt="ТПУ" style="height:36px; opacity:0.8;">
+        </div>
+        <div class="footer-links">
+            <a href="index.html">Главная</a>
+            <a href="prompts.html">Промпты</a>
+            <a href="checklist.html">Чеклист</a>
+        </div>
+        <p>© 2026 Томский политехнический университет</p>
+    </div>
+
+    <script>
+        document.querySelectorAll('.faq-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                item.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>

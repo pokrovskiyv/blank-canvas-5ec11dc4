@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Промпты для генерации контента ветвящихся сценариев с помощью ИИ. Четыре фазы создания адаптивного контроля.">
+    <meta property="og:title" content="Промпты — Адаптивный сценарный контроль">
+    <meta property="og:description" content="Промпты для ИИ-генерации контента ветвящихся сценариев в Moodle.">
+    <meta property="og:type" content="article">
+    <title>Промпты для AI — Адаптивный сценарный контроль</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --accent: #28BE46;
+            --accent-dark: #1E9E38;
+            --accent-light: #E8F8EB;
+            --accent-glow: rgba(40, 190, 70, 0.15);
+            --text: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #767676;
+            --bg: #f7f8fa;
+            --white: #fff;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --yellow: #FFB600;
+            --coral: #FF4460;
+        }
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid #e4e8ee;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #34D058);
+        }
+        .topbar a {
+            color: var(--accent-dark);
+            text-decoration: none;
+            font-size: 0.88em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        @media (hover: hover) {
+            .topbar a:hover { text-decoration: underline; }
+        }
+        .topbar a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .topbar-logo { margin-right: auto; display: flex; align-items: center; }
+        .topbar-nav { display: flex; gap: 4px; }
+        .topbar-nav a.active { color: var(--text); font-weight: 600; background: var(--bg); }
+        .topbar-title { display: none; }
+        .article {
+            max-width: 740px;
+            margin: 40px auto;
+            padding: 0 24px 80px;
+        }
+        .article-header {
+            margin-bottom: 36px;
+        }
+        .article-header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 12px;
+        }
+        .article-header .subtitle {
+            font-size: 1em;
+            color: var(--text-secondary);
+        }
+        h2 {
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-top: 44px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            color: #177A2E;
+        }
+        p { margin-bottom: 14px; }
+        ul, ol { margin-bottom: 14px; padding-left: 1.5em; }
+        li { margin-bottom: 6px; }
+        strong { font-weight: 600; }
+        a { color: var(--accent-dark); }
+
+        .prompt-card {
+            background: var(--white);
+            border: 1px solid #e4e8ee;
+            border-radius: var(--radius);
+            margin: 24px 0;
+            overflow: hidden;
+        }
+        .prompt-card-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .prompt-card-header h3 {
+            font-size: 1.05em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .prompt-card-header .goal {
+            font-size: 0.88em;
+            color: var(--text-secondary);
+        }
+        .prompt-card-vars {
+            padding: 14px 24px;
+            background: #fafbfc;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88em;
+        }
+        .prompt-card-vars strong { color: var(--text); }
+        .prompt-card-vars ul {
+            margin: 6px 0 0;
+            padding-left: 1.3em;
+        }
+        .prompt-card-vars li { margin-bottom: 3px; }
+
+        .prompt-text {
+            position: relative;
+            padding: 20px 24px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.84em;
+            line-height: 1.75;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .prompt-text .var {
+            color: #4ade80;
+            font-weight: 600;
+        }
+        .copy-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background-color 0.15s ease, color 0.15s ease;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+        @media (hover: hover) {
+            .copy-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
+        }
+
+        .example {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            background: #fefefe;
+        }
+        .example-label {
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+        .example blockquote {
+            border-left: 3px solid #ddd;
+            padding-left: 16px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            font-style: italic;
+            margin: 0;
+        }
+        .example blockquote + blockquote {
+            margin-top: 12px;
+        }
+
+        .callout {
+            background: #FFF0F2;
+            border-left: 4px solid var(--coral);
+            padding: 16px 20px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 20px 0;
+            font-size: 0.92em;
+        }
+
+        .chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 24px 0;
+            flex-wrap: wrap;
+        }
+        .chain-step {
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.82em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .chain-step:nth-child(1) { background: var(--accent); }
+        .chain-step:nth-child(3) { background: var(--accent-dark); }
+        .chain-step:nth-child(5) { background: var(--yellow); color: #1a1a2e; }
+        .chain-step:nth-child(7) { background: var(--coral); }
+        .chain-arrow {
+            color: var(--text-muted);
+            font-size: 1.2em;
+        }
+
+        .tips {
+            list-style: none;
+            padding: 0;
+        }
+        .tips li {
+            padding: 10px 0 10px 28px;
+            position: relative;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .tips li:last-child { border-bottom: none; }
+        .tips li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            border: 2px solid var(--accent-dark);
+        }
+
+        .footer {
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.7);
+            padding: 40px 20px 32px;
+            text-align: center;
+            font-size: 0.82em;
+            border-top: 3px solid var(--accent);
+        }
+        .footer a { color: var(--accent); text-decoration: none; }
+        @media (hover: hover) { .footer a:hover { text-decoration: underline; } }
+        .footer-logo { margin-bottom: 16px; }
+        .footer-links { margin-bottom: 16px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        @media (max-width: 640px) {
+            .topbar { padding: 10px 16px; gap: 10px; }
+            .topbar-nav { gap: 2px; }
+            .topbar-nav a { font-size: 0.82em; padding: 4px 6px; }
+            .article { padding: 0 16px 40px; margin-top: 24px; }
+            .article-header h1 { font-size: 1.4em; }
+            .article-header .subtitle { font-size: 0.9em; }
+            h2 { font-size: 1.1em; margin-top: 32px; }
+            .prompt-text { padding: 16px; font-size: 0.78em; }
+            .prompt-card-header { padding: 16px; }
+            .prompt-card-vars { padding: 12px 16px; }
+            .example { padding: 14px 16px; }
+            .copy-btn { padding: 10px 18px; }
+            .chain { gap: 8px; }
+            .chain-step { padding: 6px 14px; font-size: 0.78em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="https://tpu.ru/" target="_blank" rel="noopener" class="topbar-logo">
+            <img src="assets/tpu-logo-color.svg" alt="ТПУ" style="height:28px;">
+        </a>
+        <a href="index.html">&larr; На главную</a>
+        <nav class="topbar-nav">
+            <a href="instruction.html">Инструкция</a>
+            <a href="prompts.html" class="active">Промпты</a>
+            <a href="checklist.html">Чеклист</a>
+        </nav>
+    </div>
+
+    <div class="article">
+        <div class="article-header">
+            <h1>Промпты для AI-генерации контента</h1>
+            <p class="subtitle">4 последовательных промпта для создания содержания сценарного контроля. Работают в ChatGPT, Claude, YandexGPT и других AI-ассистентах.</p>
+        </div>
+
+        <p>Способ работы простой: скопируйте промпт, замените текст в <strong>[КВАДРАТНЫХ СКОБКАХ]</strong> на ваши значения, вставьте в чат с AI и отправьте. Результат проверьте на предметную корректность.</p>
+
+        <div class="chain">
+            <span class="chain-step">1. Кейс</span>
+            <span class="chain-arrow">&rarr;</span>
+            <span class="chain-step">2. Решения</span>
+            <span class="chain-arrow">&rarr;</span>
+            <span class="chain-step">3. Обратная связь</span>
+            <span class="chain-arrow">&rarr;</span>
+            <span class="chain-step">4. Экраны</span>
+        </div>
+
+        <!-- Prompt 1 -->
+        <div class="prompt-card">
+            <div class="prompt-card-header">
+                <h3>Промпт 1: Генерация профессионального кейса</h3>
+                <p class="goal">Создать описание реалистичной профессиональной ситуации для основы сценария.</p>
+            </div>
+            <div class="prompt-card-vars">
+                <strong>Что подставить:</strong>
+                <ul>
+                    <li><strong>[ДИСЦИПЛИНА]</strong> &mdash; название дисциплины</li>
+                    <li><strong>[ТЕМА]</strong> &mdash; тема контроля</li>
+                    <li><strong>[УРОВЕНЬ]</strong> &mdash; бакалавриат или магистратура</li>
+                    <li><strong>[РОЛЬ]</strong> &mdash; роль студента (менеджер проекта, врач, инженер, следователь, бухгалтер, программист)</li>
+                </ul>
+            </div>
+            <div class="prompt-text" id="prompt1">Ты — методист, разрабатывающий сценарный контроль знаний для университета.
+
+Создай профессиональную ситуацию (кейс) для интерактивного сценария по дисциплине "<span class="var">[ДИСЦИПЛИНА]</span>", тема "<span class="var">[ТЕМА]</span>".
+
+Студент выступает в роли <span class="var">[РОЛЬ]</span>. Уровень: <span class="var">[УРОВЕНЬ]</span>.
+
+Требования к кейсу:
+- Реалистичная рабочая ситуация, требующая принятия решений
+- 3 ключевых момента, где нужно сделать выбор
+- В каждом моменте 3-4 варианта действий (1 правильный, остальные с типичными ошибками)
+- Ситуация должна развиваться: каждый следующий выбор зависит от контекста
+- Используй профессиональную лексику дисциплины
+
+Формат ответа:
+1. Вводная ситуация (3-4 предложения)
+2. Контекст и ограничения (ресурсы, сроки, ограничения)
+3. Три точки принятия решений с вариантами<button class="copy-btn" onclick="copyPrompt('prompt1')">Скопировать</button></div>
+            <div class="example">
+                <div class="example-label">Примеры результатов</div>
+                <blockquote>Вы — менеджер проекта в IT-компании. Команда из 8 человек разрабатывает мобильное приложение, срок сдачи — через 6 недель. Ключевой разработчик увольняется через две недели, а заказчик прислал запрос на изменение требований.</blockquote>
+                <blockquote>Вы — дежурный врач приёмного отделения. В течение часа поступили три пациента с различной симптоматикой. Один требует срочной госпитализации, но свободных коек нет. Вам предстоит расставить приоритеты.</blockquote>
+            </div>
+        </div>
+
+        <!-- Prompt 2 -->
+        <div class="prompt-card">
+            <div class="prompt-card-header">
+                <h3>Промпт 2: Генерация точек принятия решений</h3>
+                <p class="goal">Создать вопросы с вариантами ответов и ветвлением на основе кейса.</p>
+            </div>
+            <div class="prompt-card-vars">
+                <strong>Что подставить:</strong>
+                <ul>
+                    <li><strong>[КЕЙС]</strong> &mdash; текст кейса из Промпта 1 (целиком)</li>
+                    <li><strong>[РЕЗУЛЬТАТЫ_ОБУЧЕНИЯ]</strong> &mdash; что проверяется</li>
+                </ul>
+            </div>
+            <div class="prompt-text" id="prompt2">На основе следующего кейса создай 3 точки принятия решений для интерактивного сценария с ветвлением.
+
+Кейс:
+<span class="var">[КЕЙС]</span>
+
+Проверяемые результаты обучения: <span class="var">[РЕЗУЛЬТАТЫ_ОБУЧЕНИЯ]</span>
+
+Для каждой точки укажи:
+1. Ситуацию перед выбором (2-3 предложения развития событий)
+2. Вопрос для студента
+3. 3-4 варианта ответа с маркировкой:
+   - ВЕРНЫЙ — оптимальное решение
+   - ЧАСТИЧНО ВЕРНЫЙ — правильное направление, но неполное решение
+   - НЕВЕРНЫЙ — типичная ошибка студента
+4. Куда ведёт каждый вариант (к следующей точке решения / к дополнительному объяснению / к завершению)
+
+Формат: структурированный список.<button class="copy-btn" onclick="copyPrompt('prompt2')">Скопировать</button></div>
+            <div class="example">
+                <div class="example-label">Пример результата</div>
+                <blockquote>Точка решения 1. Ситуация: На совещании вы узнали об уходе ведущего разработчика. Вопрос: Каким будет ваш первый шаг? (А) Провести аудит задач и оценить влияние на сроки [ВЕРНЫЙ]; (Б) Начать поиск замены [ЧАСТИЧНО ВЕРНЫЙ]; (В) Перераспределить задачи равномерно без анализа [НЕВЕРНЫЙ].</blockquote>
+                <blockquote>Другой пример (инженерия): При испытании прототипа обнаружено отклонение параметров. (А) Повторное испытание с калиброванным оборудованием [ВЕРНЫЙ]; (Б) Остановить производство [ЧАСТИЧНО ВЕРНЫЙ]; (В) Скорректировать допуски в документации [НЕВЕРНЫЙ].</blockquote>
+            </div>
+        </div>
+
+        <!-- Prompt 3 -->
+        <div class="prompt-card">
+            <div class="prompt-card-header">
+                <h3>Промпт 3: Генерация обратной связи</h3>
+                <p class="goal">Создать конструктивную обратную связь для каждого варианта ответа.</p>
+            </div>
+            <div class="prompt-card-vars">
+                <strong>Что подставить:</strong>
+                <ul>
+                    <li><strong>[ТОЧКИ_РЕШЕНИЙ]</strong> &mdash; результат из Промпта 2 (целиком)</li>
+                </ul>
+            </div>
+            <div class="prompt-text" id="prompt3">Для каждого варианта ответа в следующих точках принятия решений напиши обратную связь для студента.
+
+Точки решений:
+<span class="var">[ТОЧКИ_РЕШЕНИЙ]</span>
+
+Требования к обратной связи:
+- Для верного ответа: подтверждение правильности + краткое объяснение почему это лучший выбор (2-3 предложения)
+- Для частично верного: признание правильного направления + объяснение что упущено + подсказка (2-3 предложения)
+- Для неверного: без осуждения, объяснение почему это не работает + к чему приведёт такое решение + направление к правильному пути (3-4 предложения)
+
+Тон: конструктивный, обучающий, без снисходительности. Обратная связь должна помогать учиться, а не просто оценивать.<button class="copy-btn" onclick="copyPrompt('prompt3')">Скопировать</button></div>
+            <div class="example">
+                <div class="example-label">Пример результата</div>
+                <blockquote><strong>Вариант А [ВЕРНЫЙ]:</strong> Верно. Аудит задач перед принятием решений позволяет оценить реальное влияние на проект и расставить приоритеты.</blockquote>
+                <blockquote><strong>Вариант Б [ЧАСТИЧНО ВЕРНЫЙ]:</strong> Поиск замены — разумный шаг, но начинать с него преждевременно. Сначала стоит понять, какие компетенции критичны.</blockquote>
+                <blockquote><strong>Вариант В [НЕВЕРНЫЙ]:</strong> Равномерное распределение без анализа может привести к тому, что сложные задачи попадут к специалистам без нужной квалификации.</blockquote>
+            </div>
+        </div>
+
+        <!-- Prompt 4 -->
+        <div class="prompt-card">
+            <div class="prompt-card-header">
+                <h3>Промпт 4: Генерация информационных экранов</h3>
+                <p class="goal">Создать тексты приветствия, переходов и итогов сценария.</p>
+            </div>
+            <div class="prompt-card-vars">
+                <strong>Что подставить:</strong>
+                <ul>
+                    <li><strong>[КЕЙС]</strong> &mdash; текст кейса из Промпта 1</li>
+                    <li><strong>[ТОЧКИ_РЕШЕНИЙ]</strong> &mdash; точки решений из Промпта 2</li>
+                </ul>
+            </div>
+            <div class="prompt-text" id="prompt4">На основе кейса и точек решений создай текст для информационных экранов интерактивного сценария.
+
+Кейс: <span class="var">[КЕЙС]</span>
+Точки решений: <span class="var">[ТОЧКИ_РЕШЕНИЙ]</span>
+
+Создай текст для следующих экранов:
+1. Приветственный экран (название сценария, краткое описание роли студента, что предстоит)
+2. Экран ввода в ситуацию (развёрнутое описание контекста, данные, ограничения)
+3. Переходные экраны между точками решений (развитие ситуации после выбора, новые вводные данные)
+4. Итоговый экран (подведение итогов, ключевые выводы)
+
+Требования:
+- Каждый экран: 3-5 предложений
+- Профессиональный контекст сохраняется на всех экранах
+- Информация подаётся порционно, не перегружая студента<button class="copy-btn" onclick="copyPrompt('prompt4')">Скопировать</button></div>
+            <div class="example">
+                <div class="example-label">Пример результата</div>
+                <blockquote><strong>Приветственный экран:</strong> &laquo;Управление проектом в условиях неопределённости&raquo;. Вы — менеджер проекта, отвечающий за разработку мобильного приложения. Вам предстоит принять три ключевых решения, от которых зависит судьба проекта.</blockquote>
+                <blockquote><strong>Итоговый экран:</strong> Вы прошли сценарий и приняли ряд управленческих решений. Ключевой вывод: в ситуации неопределённости важно сначала провести анализ, затем планировать действия и только потом приступать к реализации.</blockquote>
+            </div>
+        </div>
+
+        <h2>Советы по доработке результатов AI</h2>
+        <ul class="tips">
+            <li>Всегда проверяйте <strong>предметную корректность</strong> &mdash; AI может допустить ошибки в терминологии, нормативных ссылках и определениях.</li>
+            <li><strong>Упрощайте длинные предложения</strong>: для экрана сценария лучше 2-3 коротких предложения, чем одно сложноподчинённое.</li>
+            <li>Добавляйте <strong>специфику вашей дисциплины</strong>: AI даёт общие формулировки, а вам нужны точные термины и реальные примеры.</li>
+            <li>Проверяйте, что неверные варианты содержат <strong>типичные ошибки ваших студентов</strong> &mdash; AI может придумать нереалистичные ошибки.</li>
+            <li>Если результат не подходит &mdash; <strong>переформулируйте промпт</strong> или добавьте больше контекста.</li>
+            <li>Промпты работают <strong>последовательно</strong>: результат одного &mdash; вход для следующего. Именно так выстроена цепочка от кейса до экранов.</li>
+            <li>Сохраняйте удачные результаты как <strong>шаблоны</strong> для других тем.</li>
+            <li>Для нетипичных дисциплин (филология, математика, искусство) укажите это <strong>явно в промпте</strong>: &laquo;Дисциплина гуманитарная / точная / творческая&raquo;.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logo">
+            <img src="assets/tpu-logo-white.svg" alt="ТПУ" style="height:36px; opacity:0.8;">
+        </div>
+        <div class="footer-links">
+            <a href="index.html">Главная</a>
+            <a href="instruction.html">Инструкция</a>
+            <a href="checklist.html">Чеклист</a>
+        </div>
+        <p>&copy; 2026 Томский политехнический университет</p>
+    </div>
+
+    <script>
+        function copyPrompt(id) {
+            var el = document.getElementById(id);
+            var text = el.textContent.replace('Скопировать', '').trim();
+            navigator.clipboard.writeText(text).then(function() {
+                var btn = el.querySelector('.copy-btn');
+                btn.textContent = 'Скопировано!';
+                setTimeout(function() { btn.textContent = 'Скопировать'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
