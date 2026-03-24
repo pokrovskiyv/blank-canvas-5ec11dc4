@@ -14,7 +14,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(26, 58, 42, 0.85); /* TPU green background with opacity */
+  background-color: rgba(0,0,0,0.8); /* Black background with opacity */
 }
 
 .h5p-branching-scenario .h5p-branching-question-wrapper {
@@ -60,11 +60,11 @@
 
 .h5p-branching-scenario .h5p-branching-question button:not(.h5p-branching-question-alternative) {
   margin: 1em 0.188em 0.188em;
-  background-color: #d4f5da;
+  background-color: #C4FEBF;
   padding: 0.9rem 1.5rem;
   border-style: solid;
   border-width: 0.1250rem;
-  border-color: #28BE46;
+  border-color: #98fd8e;
   border-radius: 2rem;
   font-size: 1.25rem;
   cursor: pointer;
@@ -73,14 +73,14 @@
 
 .h5p-branching-scenario .h5p-branching-question button:not(.h5p-branching-question-alternative):hover {
   color: #4b495e;
-  background: #e8f5ea;
-  border-color: #33d654;
+  background: #e4ffe1;
+  border-color: #b0f88f;
 }
 
 .h5p-branching-scenario .h5p-branching-question button:not(.h5p-branching-question-alternative):active {
   color: #4b495e;
-  background: #28BE46;
-  border-color: #22a83c;
+  background: #b0f88f;
+  border-color: #9fe281;
 }
 
 .h5p-branching-scenario .h5p-branching-question button:not(.h5p-branching-question-alternative):after {

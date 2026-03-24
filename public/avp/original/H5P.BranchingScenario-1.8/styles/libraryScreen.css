@@ -104,28 +104,28 @@
 @keyframes nav-flash {
   from {}
   25% {
-    border-color: #28BE46;
+    border-color: #b0f88f;
     box-shadow: none;
-    background: #28BE46;
-    color: #fff;
+    background: #b0f88f;
+    color: #4b4c60;
   }
   30% {
-    box-shadow: 0 0 0.125rem 0.75rem rgba(40, 190, 70, 0.2);
+    box-shadow: 0 0 0.125rem 0.75rem rgba(172, 248, 143, 0.2);
   }
   40% {
     box-shadow: none;
   }
   50% {
-    box-shadow: 0 0 0.125rem 0.75rem rgba(40, 190, 70, 0.2);
+    box-shadow: 0 0 0.125rem 0.75rem rgba(172, 248, 143, 0.2);
   }
   60% {
     box-shadow: none;
   }
   70% {
-    border-color: #28BE46;
+    border-color: #b0f88f;
     box-shadow: none;
-    background: #28BE46;
-    color: #fff;
+    background: #b0f88f;
+    color: #4b4c60;
   }
   to {}
 }
@@ -144,12 +144,11 @@
   top: 20px;
   left: 20px;
   width: calc(100% - 40px);
-  background: #FFFFFF;
+  background: #EFEFEF;
   color: #383838;
-  -webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  -moz-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
+  -webkit-box-shadow: 10px 4px 47px 0px rgba(0,0,0,0.4);
+  -moz-box-shadow: 10px 4px 47px 0px rgba(0,0,0,0.4);
+  box-shadow: 10px 4px 47px 0px rgba(0,0,0,0.4);
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
