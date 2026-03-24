@@ -54,7 +54,7 @@
 .joubel-icon-tip-normal .h5p-icon-speech-bubble:before {
   content: "\e908";
   margin-left: -1em;
-  color: #28BE46;
+  color: rgb(26, 115, 217);
 }
 .joubel-icon-tip-normal .h5p-icon-info:before {
   content: "\e905";
@@ -79,12 +79,12 @@
 /* Edit icon */
 .joubel-icon-edit .h5p-icon-circle:before {
   content: "\e90d";
-  color: #28BE46;
+  color: #1d74c8;
   font-size: 1.5em;
 }
 .joubel-icon-edit .h5p-icon-pencil:before {
   content: "\e90c";
-  color: #28BE46;
+  color: #1d74c8;
   font-size: 0.8em;
   text-align: center;
   position: absolute;
@@ -92,7 +92,7 @@
 }
 .joubel-icon-edit:hover .h5p-icon-circle:before {
   content: "\e90e";
-  color: #28BE46;
+  color: #1d74c8;
 }
 .joubel-icon-edit:hover .h5p-icon-pencil:before {
   color: #ffffff;

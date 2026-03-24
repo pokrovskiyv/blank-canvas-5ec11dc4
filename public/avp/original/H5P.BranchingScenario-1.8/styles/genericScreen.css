@@ -1,7 +1,7 @@
 .h5p-branching-scenario .h5p-start-screen,
 .h5p-end-screen {
   min-height: 45em;
-  background: radial-gradient(at top, #2d5a3a, #1a3a2a);
+  background: radial-gradient(at top,#5f6883,#494a5c);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -78,12 +78,12 @@
 }
 
 .h5p-branching-scenario .h5p-result-container {
-  background: #1a3a2a;
+  background: #3C3D4E;
   color: white;
   min-width: 4em;
   border-style: solid;
   border-width: 0.353em;
-  border-color: #28BE46;
+  border-color: #525669;
   border-radius: 2em;
   display: flex;
   flex-direction: row;
@@ -101,7 +101,7 @@
 .h5p-branching-scenario .h5p-result-wrapper .h5p-score-circle {
   margin: 0.3em 0.5em 0.3em 0.5em;
   display: inline-block;
-  background: #143d22;
+  background: #2b2c3a;
   padding: 0.3em 0.7em 0.3em 0.7em;
   border-radius: 2rem;
   display: flex;
@@ -155,10 +155,10 @@
   margin: 3rem 1rem 0rem 1rem;
   border-style: solid;
   border-width: 0.1250rem;
-  border-color: #28BE46;
+  border-color: #98fd8e;
   border-radius: 2rem;
   font-size: 1.25rem;
-  color: #28BE46;
+  color: #98fd8e;
   background: none;
   cursor: pointer;
   font-family: H5PRobotoMedium;
@@ -178,18 +178,18 @@
 .h5p-end-button:hover,
 .h5p-back-button:not(.h5p-disabled):hover,
 .h5p-nav-button:not(.h5p-disabled):hover {
-  border-color: #33d654;
-  color: #1a3a2a;
-  background: #33d654;
+  border-color: #b0f88f;
+  color: #4b4c60;
+  background: #b0f88f;
 }
 
 .h5p-branching-scenario .h5p-start-button:active,
 .h5p-end-button:active,
 .h5p-back-button:not(.h5p-disabled):active,
 .h5p-nav-button:not(.h5p-disabled):active {
-  border-color: #22a83c;
-  color: #1a3a2a;
-  background: #22a83c;
+  border-color: #9fe281;
+  color: #4b4c60;
+  background: #9fe281;
 }
 
 .h5p-branching-full-screen:focus-visible,
@@ -197,12 +197,12 @@
 .h5p-end-button:focus-visible,
 .h5p-back-button:not(.h5p-disabled):focus-visible,
 .h5p-nav-button:not(.h5p-disabled):focus-visible {
-  outline: 2px solid #28BE46;
+  outline: 2px solid #8ecafb;
   outline-offset: 2px;
 }
 
 .h5p-branching-scenario .h5p-branching-question button:focus-visible {
-  outline: 2px solid #28BE46;
+  outline: 2px solid #0575d1;
   outline-offset: 2px;
 }
 
