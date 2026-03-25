@@ -110,9 +110,9 @@
         .hero-toprow {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
             margin-bottom: 24px;
         }
         .hero-toprow a {
@@ -537,9 +537,14 @@
                 </a>
                 <div class="hero-badge">Конкурс «Лучшая педагогическая практика» ТПУ 2026 &middot; ПРО-технологии</div>
             </div>
+            <a href="https://tpu.ru" target="_blank" rel="noopener" class="hero-logo">
+                <img src="assets/tpu-logo-white.svg" alt="Томский политехнический университет" style="height: 48px; margin-bottom: 16px; opacity: 0.95;">
+            </a>
             <h1>Адаптивный сценарный контроль в&nbsp;Moodle</h1>
             <p class="hero-subtitle">
-                Методический комплект, предназначенный для разработки интерактивных контрольных работ в Moodle с использованием H5P Branching Scenario. Обеспечивает создание профессионально ориентированных кейсов с вариативными траекториями, автоматической обратной связью и фиксацией результатов в журнале оценок.
+                Методический комплект для создания интерактивных оценочных сценариев
+                на основе H5P Branching Scenario. Студент принимает решения в профессиональном кейсе,
+                получает обратную связь на каждом шаге, а баллы автоматически попадают в журнал оценок.
             </p>
             <div class="hero-meta">
                 <span>Покровская А.В. &middot; Бизнес-школа ТПУ</span>
@@ -556,14 +561,23 @@
         <div class="scenario-cards">
             <a class="scenario-card" id="card-original" href="?scenario=original">
                 <div class="scenario-card-icon original">&#9734;</div>
-                <h3>Демо-сценарий</h3>
-                <p>Фрагмент контрольной работы по английскому языку. Ветвление сценария продемонстрировано на третьем вопросе.</p>
+                <h3>Апробированный сценарий</h3>
+                <p>Профессиональный кейс «Coffee Shop Rush Week» по дисциплине «Английский язык в профессиональной деятельности». Пройден 22 студентами.</p>
+                <div class="scenario-card-stats">
+                    <span>29 экранов</span>
+                    <span>3 ветвления</span>
+                    <span>~40 мин</span>
+                </div>
                 <span class="card-arrow">&rarr;</span>
             </a>
             <a class="scenario-card" id="card-template" href="?scenario=template">
                 <div class="scenario-card-icon template">&#9998;</div>
                 <h3>Универсальный шаблон</h3>
                 <p>Готовая структура с шаблонами текстов. Замените содержание под свою дисциплину по инструкции из комплекта.</p>
+                <div class="scenario-card-stats">
+                    <span>17 экранов</span>
+                    <span>3 ветвления, 2 пути</span>
+                </div>
                 <span class="card-arrow">&rarr;</span>
             </a>
         </div>
@@ -662,7 +676,7 @@
         (function() {
             var labels = {
                 template: 'Универсальный шаблон',
-                original: 'Демо-сценарий'
+                original: 'Апробированный сценарий - Coffee Shop Rush Week'
             };
 
             var params = new URLSearchParams(window.location.search);
