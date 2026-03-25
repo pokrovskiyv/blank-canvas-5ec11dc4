@@ -11,6 +11,19 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 16px;
+            background: var(--accent);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 6px;
+            z-index: 100;
+            font-size: 0.88em;
+            text-decoration: none;
+        }
+        .skip-link:focus { top: 8px; }
         :root {
             --accent: #28BE46;
             --accent-dark: #1E9E38;
@@ -104,6 +117,14 @@
             font-size: 0.82em;
             color: var(--text-muted);
         }
+        .progress-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .topbar-logo img { height: 28px; }
+        .footer-logo img { height: 36px; opacity: 0.8; }
 
         .reset-btn {
             background: none;
@@ -136,7 +157,7 @@
         .checklist-group-header h2 {
             font-size: 1.1em;
             font-weight: 700;
-            color: #177A2E;
+            color: var(--accent-dark);
             margin: 0;
             padding: 0;
             border: none;
@@ -177,7 +198,7 @@
         }
         .check-item:active { background: #e8eaed; }
         .check-item.checked {
-            opacity: 0.6;
+            opacity: 0.75;
         }
         .check-item.checked .check-label {
             text-decoration: line-through;
@@ -193,7 +214,11 @@
             cursor: pointer;
             position: relative;
             margin-top: 2px;
-            transition: all 0.15s;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .check-item input[type="checkbox"]:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
         .check-item input[type="checkbox"]:checked {
             background: var(--accent);
@@ -235,47 +260,55 @@
             border-top: 3px solid var(--accent);
         }
         .footer a { color: var(--accent); text-decoration: none; }
+        .footer a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         @media (hover: hover) { .footer a:hover { text-decoration: underline; } }
         .footer-logo { margin-bottom: 16px; }
         .footer-links { margin-bottom: 16px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 
         @media (max-width: 640px) {
-            .topbar { padding: 10px 16px; gap: 10px; }
+            .topbar { padding: 10px 16px; gap: 8px; flex-wrap: wrap; }
             .topbar-nav { gap: 2px; }
-            .topbar-nav a { font-size: 0.82em; padding: 4px 6px; }
+            .topbar-nav a { font-size: 0.78em; padding: 4px 6px; }
             .article { padding: 0 16px 40px; margin-top: 24px; }
             .article-header h1 { font-size: 1.4em; }
             .article-header .subtitle { font-size: 0.9em; }
             .checklist-group { padding: 16px; }
             .check-item { padding: 10px 8px; }
         }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="topbar">
+    <a href="#content" class="skip-link">Перейти к содержимому</a>
+    <header class="topbar">
         <a href="https://tpu.ru/" target="_blank" rel="noopener" class="topbar-logo">
-            <img src="assets/tpu-logo-color.svg" alt="ТПУ" style="height:28px;">
+            <img src="assets/tpu-logo-color.svg" alt="ТПУ">
         </a>
         <a href="index.html">&larr; На главную</a>
-        <nav class="topbar-nav">
+        <nav class="topbar-nav" aria-label="Основная навигация">
             <a href="instruction.html">Инструкция</a>
             <a href="prompts.html">Промпты</a>
             <a href="checklist.html" class="active">Чеклист</a>
         </nav>
-    </div>
+    </header>
 
-    <div class="article">
+    <main class="article" id="content">
         <div class="article-header">
             <h1>Чеклист подготовки</h1>
             <p class="subtitle">Контрольный список для создания сценарного контроля. Отмечайте выполненные пункты - прогресс сохраняется в браузере.</p>
         </div>
 
         <div class="progress-bar">
-            <div class="progress-bar-fill" id="progress-fill"></div>
+            <div class="progress-bar-fill" id="progress-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Прогресс выполнения чеклиста"></div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+        <div class="progress-wrapper">
             <div class="progress-text" id="progress-text">0 из 0 выполнено</div>
-            <button class="reset-btn" id="reset-btn">Сбросить</button>
+            <button type="button" class="reset-btn" id="reset-btn">Сбросить</button>
         </div>
 
         <!-- Group 1: Before start -->
@@ -338,7 +371,7 @@
                 <h2>Подготовка контента</h2>
             </div>
 
-            <div class="checklist-subheader">С помощью AI (рекомендуется)</div>
+            <h3 class="checklist-subheader">С помощью AI (рекомендуется)</h3>
 
             <label class="check-item">
                 <input type="checkbox" data-key="c7">
@@ -375,7 +408,7 @@
                 </div>
             </label>
 
-            <div class="checklist-subheader">Или вручную</div>
+            <h3 class="checklist-subheader">Или вручную</h3>
 
             <label class="check-item">
                 <input type="checkbox" data-key="c12">
@@ -500,11 +533,11 @@
                 </div>
             </label>
         </div>
-    </div>
+    </main>
 
-    <div class="footer">
+    <footer class="footer">
         <div class="footer-logo">
-            <img src="assets/tpu-logo-white.svg" alt="ТПУ" style="height:36px; opacity:0.8;">
+            <img src="assets/tpu-logo-white.svg" alt="ТПУ">
         </div>
         <div class="footer-links">
             <a href="index.html">Главная</a>
@@ -512,7 +545,7 @@
             <a href="prompts.html">Промпты</a>
         </div>
         <p>&copy; 2026 Томский политехнический университет</p>
-    </div>
+    </footer>
 
     <script>
         (function() {
@@ -522,19 +555,31 @@
             function updateProgress() {
                 var checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
                 var pct = Math.round((checked / total) * 100);
-                document.getElementById('progress-fill').style.width = pct + '%';
+                var fill = document.getElementById('progress-fill');
+                fill.style.width = pct + '%';
+                fill.setAttribute('aria-valuenow', pct);
                 document.getElementById('progress-text').textContent = checked + ' из ' + total + ' выполнено';
+            }
+
+            function storageGet(key) {
+                try { return localStorage.getItem(key); } catch (e) { return null; }
+            }
+            function storageSet(key, value) {
+                try { localStorage.setItem(key, value); } catch (e) { /* private mode */ }
+            }
+            function storageRemove(key) {
+                try { localStorage.removeItem(key); } catch (e) { /* private mode */ }
             }
 
             items.forEach(function(item) {
                 var key = item.getAttribute('data-key');
-                if (localStorage.getItem('checklist_' + key) === 'true') {
+                if (storageGet('checklist_' + key) === 'true') {
                     item.checked = true;
                     item.closest('.check-item').classList.add('checked');
                 }
 
                 item.addEventListener('change', function() {
-                    localStorage.setItem('checklist_' + key, item.checked);
+                    storageSet('checklist_' + key, item.checked);
                     item.closest('.check-item').classList.toggle('checked', item.checked);
                     updateProgress();
                 });
@@ -543,9 +588,10 @@
             updateProgress();
 
             document.getElementById('reset-btn').addEventListener('click', function() {
+                if (!confirm('Сбросить весь прогресс?')) return;
                 items.forEach(function(item) {
                     var key = item.getAttribute('data-key');
-                    localStorage.removeItem('checklist_' + key);
+                    storageRemove('checklist_' + key);
                     item.checked = false;
                     item.closest('.check-item').classList.remove('checked');
                 });
