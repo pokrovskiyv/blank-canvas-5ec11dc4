@@ -1,30 +1,14 @@
 @echo off
-chcp 65001 >nul
 setlocal
-
-REM ============================================================
-REM  Запуск сайта с флешки (Windows). Двойной клик по этому файлу.
-REM
-REM  Структура на флешке:
-REM      <корень флешки>\
-REM          dist\              ← собранный сайт (папка из репозитория)
-REM          miniserve.exe      ← портативный веб-сервер (см. ниже)
-REM          usb-start.bat      ← этот файл
-REM
-REM  Откуда взять miniserve.exe:
-REM      1. Открой https://github.com/svenstaro/miniserve/releases
-REM      2. Скачай файл вида:
-REM             miniserve-vX.Y.Z-x86_64-pc-windows-msvc.exe
-REM      3. Переименуй в miniserve.exe
-REM      4. Положи рядом с этим bat-файлом.
-REM ============================================================
 
 cd /d "%~dp0"
 
+set PORT=8080
+
 if not exist "dist\index.html" (
     echo.
-    echo [Ошибка] Рядом с usb-start.bat не найдена папка dist\index.html.
-    echo Скопируй на флешку папку dist целиком.
+    echo [Error] dist\index.html not found next to usb-start.bat.
+    echo Make sure the 'dist' folder is in the SAME directory as this .bat file.
     echo.
     pause
     exit /b 1
@@ -32,23 +16,35 @@ if not exist "dist\index.html" (
 
 if not exist "miniserve.exe" (
     echo.
-    echo [Ошибка] Рядом с usb-start.bat не найден miniserve.exe.
-    echo.
-    echo Скачай его с:
-    echo     https://github.com/svenstaro/miniserve/releases
-    echo Файл: miniserve-vX.Y.Z-x86_64-pc-windows-msvc.exe
-    echo Переименуй в miniserve.exe и положи на флешку рядом с этим bat.
+    echo [Error] miniserve.exe not found next to usb-start.bat.
+    echo Download it from: https://github.com/svenstaro/miniserve/releases
+    echo File: miniserve-x86_64-pc-windows-msvc.exe (rename to miniserve.exe)
     echo.
     pause
     exit /b 1
 )
 
-set PORT=8080
 echo.
-echo Запускаю локальный сервер на http://localhost:%PORT%
-echo Чтобы остановить — закрой это окно или нажми Ctrl+C.
+echo ============================================================
+echo  Starting local web server on http://localhost:%PORT%/
+echo  Do NOT close this window. Closing it stops the server.
+echo  To stop: close this window or press Ctrl+C.
+echo ============================================================
 echo.
 
-start "" "http://localhost:%PORT%/"
+REM Open the browser in a detached child process after a ~2-second
+REM delay so miniserve has time to start listening on the port.
+REM 'ping -n 3 127.0.0.1' is the most portable Windows "sleep 2".
+start "" /min cmd /c "ping -n 3 127.0.0.1 >nul && start http://localhost:%PORT%/"
 
+REM Run miniserve in the foreground; closing this window stops it.
 miniserve.exe dist --port %PORT% --index index.html --interfaces 127.0.0.1
+
+REM If miniserve exited (error, port in use, blocked, etc.) keep the
+REM window open so the user can read the message.
+echo.
+echo ============================================================
+echo  Server stopped or failed to start. See messages above.
+echo  Press any key to close this window.
+echo ============================================================
+pause >nul
